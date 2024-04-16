@@ -11,11 +11,15 @@ class IncreaseSpeed():
   '''
 
   def __init__(self, current_speed: int, max_speed: int):
-    pass
+    self.current = current_speed
+    self.max = max_speed
   def __iter__(self):
-    pass
+    return self 
   def __next__(self):
-    pass
+    self.current += 1
+    if self.current < self.max:
+      return self.current
+    raise StopIteration
 
 class DecreaseSpeed():
   '''
@@ -93,7 +97,7 @@ class Car():
     # displays weather conditions
     pass
 
-# To use this API you have to install openmeteo_requests library'
+    # To use this API you have to install openmeteo_requests library'
 import openmeteo_requests
 import datetime
 
