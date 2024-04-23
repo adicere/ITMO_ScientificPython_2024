@@ -1,6 +1,6 @@
-!pip install openmeteo_requests
-import openmeteo_requests
-import datetime
+#!pip install openmeteo_requests
+#import openmeteo_requests
+#import datetime
 
 class IncreaseSpeed():
   def __init__(self, current_speed: int, max_speed: int):
@@ -109,3 +109,7 @@ class Car():
     print(f"Current apparent_temperature: {round(current_apparent_temperature, 0)} C")
     print(f"Current rain: {current_rain} mm")
     print(f"Current wind_speed: {round(current_wind_speed_10m, 1)} m/s")
+
+    car2=Car(60,0)
+    print(car2.brake(-10))
+    print(car2.brake())
