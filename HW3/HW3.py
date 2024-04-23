@@ -1,28 +1,40 @@
-#!pip install openmeteo_requests
-#import openmeteo_requests
-#import datetime
+!pip install openmeteo_requests
+import openmeteo_requests
+import datetime
 
 class IncreaseSpeed():
   def __init__(self, current_speed: int, max_speed: int):
     self.current = current_speed
-    self.max = max_speed
+    self.max=max_speed
   def __iter__(self):
     return self
   def __next__(self):
     self.current += 10
-    if self.current <= self.max:
+    if self.current == self.max:
+      #print("Maximum speed is reached")
       return self.current
+    else:
+      if self.current <= self.max:
+        return self.current
+      raise StopIteration
+      
 
 class DecreaseSpeed():
-  def __init__(self, current_speed: int, min_speed: int):
+  def __init__(self, current_speed: int, target_speed=0):
     self.current = current_speed
-    self.min = min_speed
+    self.target = target_speed
+    #self.min == 0
   def __iter__(self):
     return self
   def __next__(self):
     self.current -= 10
-    if self.current >= self.min:
+    if self.current == 0:
+      #print("Minimum speed is reached. Car is stopped")
       return self.current
+    else:
+      while self.current > 0:
+        return self.current
+      raise StopIteration
 
 class Car():
 
@@ -48,10 +60,20 @@ class Car():
       return
     else:
       if upper_border != None:
-        acceleration = IncreaseSpeed(self.current, upper_border)
-        while self.current < upper_border:
-          self.current = next(acceleration)
-          print(f"Driving at {self.current} km/h")
+        if upper_border<=0:
+          print("Wrong speed value - number should be greater than 0")
+          return
+        if self.current > upper_border:
+          print(f"Oops! Current speed is greater than {upper_border} km/h! If you want to decrease speed use 'brake' button instead")
+          return
+        if upper_border>self.max:
+          print(f"Can't ride so fast! Maximum speed is {self.max} km/h!")
+          return
+        else:
+          acceleration = IncreaseSpeed(self.current, upper_border)
+          while self.current < upper_border:
+            self.current = next(acceleration)
+            print(f"Driving at {self.current} km/h")
       else:
         acceleration = IncreaseSpeed(self.current, self.max)
         self.current = next(acceleration)
@@ -63,12 +85,19 @@ class Car():
       return
     else:
       if lower_border !=None:
-        braking=DecreaseSpeed(self.current, lower_border)
-        while self.current > lower_border:
-          self.current = next(braking)
-          print(f"Driving at {self.current} km/h")
+        if lower_border<0:
+          print("Wrong speed value - number should be greater than 0")
+          return
+        if lower_border>self.current:
+          print(f"Oops! Current speed is less than {lower_border} km/h! If you want to increase speed use 'accelerate' button instead")
+          return
+        else:
+          braking=DecreaseSpeed(self.current, lower_border)
+          while self.current > lower_border:
+            self.current = next(braking)
+            print(f"Driving at {self.current} km/h")
       else:
-        braking = DecreaseSpeed(self.current,0)
+        braking = DecreaseSpeed(self.current)
         self.current = next(braking)
         return f'Speed decreased down to {self.current} km/h'
 
@@ -109,7 +138,3 @@ class Car():
     print(f"Current apparent_temperature: {round(current_apparent_temperature, 0)} C")
     print(f"Current rain: {current_rain} mm")
     print(f"Current wind_speed: {round(current_wind_speed_10m, 1)} m/s")
-
-    car2=Car(60,0)
-    print(car2.brake(-10))
-    print(car2.brake())
